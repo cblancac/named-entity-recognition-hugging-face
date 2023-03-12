@@ -6,22 +6,14 @@ sys.path.append(str(project_root))
 
 import boto3
 
-from call_textract import CallTextract
-
+from aws_service.aws_textract import AwsTextract
 
 if __name__ == "__main__":
 
     s3 = boto3.resource('s3')
     bucket_name = s3.Bucket('process-textract-python')
+    folder_name = "upload-pdf/"
     output_path = "data/preprocess/txts"
 
-    for object_summary in bucket_name.objects.filter(Prefix="upload-pdf/"):
-        document_name = object_summary.key
-        if document_name.endswith(".pdf"):
-            textract_service = CallTextract(document_name, bucket_name.name)
-            jobId = textract_service.start_job()
-            print("Started job with id: {}".format(jobId))
-            if(textract_service.is_job_complete(jobId)):
-                response = textract_service.get_job_results(jobId)
-                plain_text = textract_service.extract_plain_text(response)
-                textract_service.save_text_plain(output_path, document_name, plain_text)
+    textract_service = AwsTextract(bucket_name, folder_name, output_path)
+    textract_service.call_textract_service_dataset()
