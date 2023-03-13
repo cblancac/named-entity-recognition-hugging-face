@@ -12,8 +12,9 @@ if __name__ == "__main__":
 
     s3 = boto3.resource('s3')
     bucket_name = s3.Bucket('process-textract-python')
-    folder_name = "upload-pdf/"
-    output_path = "data/preprocess/txts"
+    folder_name = "upload-pdf/"    
+    out_path_json = "data/preprocess/json"
+    out_path_text = "data/preprocess/txts"
 
-    textract_service = AwsTextract(bucket_name, folder_name, output_path)
+    textract_service = AwsTextract(bucket_name, folder_name, out_path_json, out_path_text)
     textract_service.call_textract_service_dataset()

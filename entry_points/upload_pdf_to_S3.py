@@ -1,29 +1,16 @@
 from pathlib import Path
 import sys
-from os import listdir
-from os.path import isfile, join
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
-import boto3
-
+from aws_service.aws_uploader import AwsUploader
 
 if __name__ == "__main__":
 
-    # Let's use Amazon S3
-    s3 = boto3.client("s3")
-
-    local_path_dataset = "data/preprocess/pdfs"
     bucket_name = "process-textract-python"
     folder_name = "upload-pdf"
+    local_path_dataset = "data/preprocess/pdfs"
 
-    filenames = [f for f in listdir(local_path_dataset) if isfile(join(local_path_dataset, f))]
-
-    for filename in filenames:
-        print(filename)
-        s3.upload_file(
-            Filename=f"{local_path_dataset}/{filename}",
-            Bucket=f"{bucket_name}",
-            Key=f"{folder_name}/{filename}"
-        )
+    s3_service = AwsUploader(bucket_name, folder_name, local_path_dataset)
+    s3_service.upload_S3_dataset()
