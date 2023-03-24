@@ -15,11 +15,9 @@ class AwsTextract(AwsManager):
         self.out_path_json = out_path_json
         self.out_path_text = out_path_text
 
-    def call_textract_service_dataset(self):
-        for object_summary in self.bucket_name.objects.filter(Prefix=f"{self.folder_name}"):
-            filename = object_summary.key
-            
-            response = get_textract_response(self.bucket_name.name, filename)
-            save_response_json(response, self.out_path_json, filename)
-            save_text_plain(response, self.out_path_text, filename)
+    def call_textract_service_dataset(self, filename):
+        response = get_textract_response(self.bucket_name.name, filename)
+        save_response_json(response, self.out_path_json, filename)
+        save_text_plain(response, self.out_path_text, filename)
+        return response
 
