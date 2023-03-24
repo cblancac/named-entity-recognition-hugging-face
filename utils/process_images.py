@@ -1,4 +1,9 @@
 import numpy as np
+from pdf2image import convert_from_path
+
+
+def convert_pdf_to_images(path_filename):
+    return convert_from_path(path_filename, dpi=300, fmt="png")
 
 
 def get_size_per_image(images):
