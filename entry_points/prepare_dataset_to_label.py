@@ -4,6 +4,8 @@ import sys
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
+import boto3
+
 from aws_service.aws_textract import AwsTextract
 from aws_service.aws_uploader import AwsUploader
 from split_document import SplitDocument
@@ -11,25 +13,27 @@ from utils.get_words_and_coord_per_pages import (
     get_collection_of_words_coords_pages,
     get_collections_grouped_by_pages,
 )
-from utils.prepare_aws_response import (
-    get_textract_response
-)
 from utils.process_images import (
     get_size_per_image,
-    convert_pdf_to_images
+    convert_pdf_to_images,
+    process_filename
 )
 
 
 if __name__ == "__main__":
 
-    # Upload pdf files to S3
+    s3 = boto3.resource('s3')
     bucket_name = "process-textract-python"
-    folder_name = "upload-pdf"
+    bucket_name = s3.Bucket(bucket_name)
+    folder_name = "upload-pdf/"
     local_path_dataset = "data/preprocess/pdfs"
 
     out_path_json = "data/preprocess/json"
     out_path_text = "data/preprocess/txts"
 
+    output_path = "data/preprocess/ner_labels"
+
+    # Upload pdf files to S3
     s3_service = AwsUploader(bucket_name, folder_name, local_path_dataset)
     s3_service.upload_S3_dataset()
 
@@ -38,7 +42,9 @@ if __name__ == "__main__":
     for object_summary in bucket_name.objects.filter(Prefix=f"{folder_name}"):
         filename = object_summary.key
 
-        response = get_textract_response(filename=filename)
+        response = textract_service.call_textract_service_dataset(filename)
+        if not response:
+            continue
 
         #Get the list of words, coordinates and pages
         list_words, list_coordinates, list_pages = get_collection_of_words_coords_pages(response)
@@ -48,21 +54,13 @@ if __name__ == "__main__":
                                                                               list_coordinates,
                                                                               list_pages)
         
+        filename = process_filename(filename)
         images = convert_pdf_to_images(f"{local_path_dataset}/{filename}")
         size_images = get_size_per_image(images)
 
-    
-    
+        split_doc = SplitDocument(output_path)
+        paragraphs = split_doc.split_doc_by_paragraphs(grouped_words, grouped_coordinates, size_images)
+        sentences = split_doc.split_doc_by_sentences(paragraphs)
+        words = split_doc.split_doc_by_words(sentences)
+        split_doc._export_datasets_splited(words, output_path, filename)
 
-
-
-
-
-    local_path_pdfs = "data/preprocess/pdfs"
-    local_path_json = "data/preprocess/json"
-    output_path = "data/preprocess/ner_labels"
-
-    s3_service = SplitDocument(
-        local_path_pdfs, local_path_json, output_path
-        )
-    s3_service.prepare_dataset()

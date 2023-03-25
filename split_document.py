@@ -1,61 +1,15 @@
-import json
 import os
-from os import listdir
-from os.path import isfile, join
 from typing import List, Dict
 
 
 import pandas as pd
-from pdf2image import convert_from_path
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
 
-from utils.get_words_and_coord_per_pages import (
-    get_collection_of_words_coords_pages,
-    get_collections_grouped_by_pages,
-)
-from utils.process_images import (
-    get_size_per_image
-)
-
 
 class SplitDocument():
-    def __init__(self,
-                 local_path_pdfs,
-                 local_path_json,
-                 output_path
-                 ):
-        self.local_path_pdfs = local_path_pdfs
-        self.local_path_json = local_path_json
+    def __init__(self,output_path):
         self.output_path = output_path
-
-    def prepare_dataset(self):
-        filenames_pdf = [f for f in listdir(self.local_path_pdfs) if isfile(join(self.local_path_pdfs, f))]
-        filenames_json = [self._convert_to_fname_suffix(f, 'json') for f in filenames_pdf]
-        
-        for f_json, f_pdf in zip(filenames_json, filenames_pdf):
-            file = open(f"{self.local_path_json}/{f_json}")
-            response = json.load(file) 
-
-            #Get the list of words, coordinates and pages
-            list_words, list_coordinates, list_pages = get_collection_of_words_coords_pages(response)
-
-            # Get the list of words, coordinates and pages per pages
-            grouped_words, grouped_coordinates = get_collections_grouped_by_pages(list_words,
-                                                                                     list_coordinates,
-                                                                                     list_pages)
-            
-            images = convert_from_path(f"{self.local_path_pdfs}/{f_pdf}", dpi=300, fmt="png")
-            size_images = get_size_per_image(images)
-
-            paragraphs = self.split_doc_by_paragraphs(grouped_words, grouped_coordinates, size_images)
-            sentences = self.split_doc_by_sentences(paragraphs)
-            words = self.split_doc_by_words(sentences)
-            _export_datasets_splited(words, self.output_path, f_pdf)
-
-
-    def _convert_to_fname_suffix(self, filename: str, suffix: str) -> str:
-        return f"{filename[:-3]}{suffix}"
 
     def split_doc_by_paragraphs(self, grouped_words, grouped_coordinates, size_images):
 
@@ -84,20 +38,19 @@ class SplitDocument():
     def split_doc_by_words(self, sentences: List[Dict]) -> List[Dict]:
         words = [{'sentence_id': sentence['sentence_id'], 'words': word_tokenize(sentence['text'])} for sentence in sentences]
         return words
+    
+    def _export_datasets_splited(self, words: List[Dict], output_path: str, filename: str) -> None:
+        df = pd.DataFrame(columns = ['sentence_id', 'words']) 
+        for word in words:
+            sentence_id = [word['sentence_id']]*len(word['words'])
+            df=pd.concat([df, pd.DataFrame(list(zip(sentence_id, word['words'])),
+                columns =['sentence_id', 'words'])], ignore_index=True)
+        output_path = f"{output_path}/{filename}"
+        exist_path = os.path.exists(output_path)
+        if not exist_path:
+            os.makedirs(output_path)
+        df.to_csv(f"{output_path}/labels.csv", index = False)
 
 
 def _flatten(l):
     return [item for sublist in l for item in sublist]
-
-
-def _export_datasets_splited(words: List[Dict], output_path: str, filename: str) -> None:
-    df = pd.DataFrame(columns = ['sentence_id', 'words']) 
-    for word in words:
-        sentence_id = [word['sentence_id']]*len(word['words'])
-        df=pd.concat([df, pd.DataFrame(list(zip(sentence_id, word['words'])),
-               columns =['sentence_id', 'words'])], ignore_index=True)
-    output_path = f"{output_path}/{filename}"
-    exist_path = os.path.exists(output_path)
-    if not exist_path:
-        os.makedirs(output_path)
-    df.to_csv(f"{output_path}/labels.csv", index = False)

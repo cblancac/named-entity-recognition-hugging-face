@@ -22,3 +22,7 @@ def _get_width_height(image):
 
 def _pilToNumpy(img):
     return np.array(img)
+
+
+def process_filename(filename):
+    return '/'.join(filename.split('/')[1:])
