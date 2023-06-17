@@ -14,19 +14,23 @@ s3 = boto3.client("s3")
 
 
 class CloudService(ABC):
+    """Class representing a cloud service"""
+
     @abstractmethod
     def call_textract_service_dataset(self, filename) -> None:
-        pass
+        """Extract information from files"""
 
     @abstractmethod
     def upload_s3_dataset(self) -> None:
-        pass
+        """Upload dataset to Cloud"""
 
     def upload_s3_file(self, filename) -> None:
-        pass
+        """Upload file to Cloud"""
 
 
 class AwsService(CloudService):
+    """Class representing a AWS service"""
+    
     def __init__(
         self,
         bucket_name: str,
@@ -60,5 +64,5 @@ class AwsService(CloudService):
         ]
         for filename in tqdm(filenames):
             self.upload_s3_file(filename)
-            print(f'{filename} {Fore.YELLOW} [Uploading file...]')
-        print(f'{Fore.GREEN} [All files have been uploaded correctly]')
+            print(f"{filename} {Fore.YELLOW} [Uploading file...]")
+        print(f"{Fore.GREEN} [All files have been uploaded correctly]")
