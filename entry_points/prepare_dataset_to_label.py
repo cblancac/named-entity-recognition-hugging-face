@@ -29,7 +29,7 @@ if __name__ == "__main__":
         output_path=OUTPUT_PATH,
         local_path_dataset=LOCAL_PATH_DATASET,
     )
-    #aws_service.upload_s3_dataset()
+    aws_service.upload_s3_dataset()
 
     # Call Textract service to get the response per pdf
     for object_summary in BUCKET_NAME.objects.filter(Prefix=f"{FOLDER_NAME}"):
