@@ -29,7 +29,7 @@ if __name__ == "__main__":
         output_path=OUTPUT_PATH,
         local_path_dataset=LOCAL_PATH_DATASET,
     )
-    # aws_service.upload_S3_dataset()
+    #aws_service.upload_s3_dataset()
 
     # Call Textract service to get the response per pdf
     for object_summary in BUCKET_NAME.objects.filter(Prefix=f"{FOLDER_NAME}"):
@@ -40,18 +40,18 @@ if __name__ == "__main__":
             continue
 
         process_pdf = PreprocessPDF(response)
-        grouped_words, grouped_coordinates = process_pdf.get_collections_grouped_by_pages(response)
+        grouped_words, grouped_coordinates = process_pdf.get_collections_grouped_by_pages()
 
-        process_image = ProcessImage()
-        FILENAME = process_image.process_filename(filename)
-        images = process_image.convert_pdf_to_images(f"{LOCAL_PATH_DATASET}/{FILENAME}")
+        process_image = ProcessImage(filename)
+        FILENAME = process_image.process_filename()
+        images = process_image.convert_pdf_to_images(Path(LOCAL_PATH_DATASET) / f"{FILENAME}")
         size_images = process_image.get_size_per_image(images)
 
-        split_doc = SplitDocument()
-        sentences = split_doc.split_doc_by_sentences(
+        split_doc = SplitDocument(
             grouped_words,
             grouped_coordinates,
             size_images
         )
+        sentences = split_doc.split_doc_by_sentences()
         words = split_doc.split_doc_by_words(sentences)
         split_doc.export_datasets_splited(words, OUTPUT_PATH, FILENAME)

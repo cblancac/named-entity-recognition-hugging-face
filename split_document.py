@@ -1,5 +1,5 @@
 from typing import List, Dict
-
+from PIL.PngImagePlugin import PngImageFile
 
 import pandas as pd
 from nltk.tokenize import sent_tokenize
@@ -15,12 +15,22 @@ from utils.save_response import (
 NER_EXTENSION = "ner_labels/"
 
 
-class SplitDocument():
+class SplitDocument:
     """Class to split documents"""
 
-    def split_doc_by_sentences(self, grouped_words, grouped_coordinates, size_images) -> List[Dict]:
+    def __init__(
+        self,
+        grouped_words: List[List[str]],
+        grouped_coordinates: List[List[str]],
+        size_images: List[PngImageFile],
+    ):
+        self.grouped_words = grouped_words
+        self.grouped_coordinates = grouped_coordinates
+        self.size_images = size_images
+
+    def split_doc_by_sentences(self) -> List[Dict]:
         """Get paragraphs per documument and convert them into lists of sentences."""
-        paragraphs = self._split_doc_by_paragraphs(grouped_words, grouped_coordinates, size_images)
+        paragraphs = self._split_doc_by_paragraphs()
         sentences = [sent_tokenize(text) for text in paragraphs]
         sentences = _flatten(sentences)
         sentences = [
@@ -63,13 +73,13 @@ class SplitDocument():
 
         data_to_label.to_csv(f"{output_path}/{filename}/labels.csv", index=False)
 
-    def _split_doc_by_paragraphs(self, grouped_words, grouped_coordinates, size_images):
+    def _split_doc_by_paragraphs(self):
         words_grouped_by_position = []
         for idx, (words_per_pages, coord_per_pages) in enumerate(
-            zip(grouped_words, grouped_coordinates)
+            zip(self.grouped_words, self.grouped_coordinates)
         ):
             idx_splits = [0]
-            height, _ = size_images[idx]
+            height, _ = self.size_images[idx]
             for idx_token, coordinate in enumerate(coord_per_pages):
                 if idx_token == len(words_per_pages) - 1:
                     idx_splits.append(len(words_per_pages))
