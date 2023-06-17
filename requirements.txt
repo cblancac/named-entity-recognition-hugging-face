@@ -1,4 +1,7 @@
 boto3
+colorama
 nltk
 numpy
 pandas
+seqeval
+tqdm

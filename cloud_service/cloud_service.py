@@ -30,7 +30,7 @@ class CloudService(ABC):
 
 class AwsService(CloudService):
     """Class representing a AWS service"""
-    
+
     def __init__(
         self,
         bucket_name: str,
