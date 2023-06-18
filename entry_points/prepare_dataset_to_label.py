@@ -55,3 +55,4 @@ if __name__ == "__main__":
         sentences = split_doc.split_doc_by_sentences()
         words = split_doc.split_doc_by_words(sentences)
         split_doc.export_datasets_splited(words, OUTPUT_PATH, FILENAME)
+        
