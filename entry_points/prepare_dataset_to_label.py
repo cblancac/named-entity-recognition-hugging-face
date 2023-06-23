@@ -8,7 +8,7 @@ sys.path.append(str(project_root))
 
 from cloud_service.cloud_service import AwsService
 from dataset.preprocess_files import PreprocessPDF
-from split_document import SplitDocument
+from dataset.split_document import SplitDocument
 from utils.process_images import (
     ProcessImage,
 )
@@ -29,13 +29,13 @@ if __name__ == "__main__":
         output_path=OUTPUT_PATH,
         local_path_dataset=LOCAL_PATH_DATASET,
     )
-    aws_service.upload_s3_dataset()
+    #aws_service.upload_s3_dataset()
 
     # Call Textract service to get the response per pdf
     for object_summary in BUCKET_NAME.objects.filter(Prefix=f"{FOLDER_NAME}"):
         filename = object_summary.key
 
-        response = aws_service.call_textract_service_dataset(filename)
+        response = aws_service.call_textract_service(filename)
         if not response:
             continue
 

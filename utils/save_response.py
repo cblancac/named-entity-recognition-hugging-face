@@ -17,7 +17,7 @@ def save_text_plain(response, output_path, filename):
     filename = add_prefix(filename, TEXT_EXTENSION)
     makedirs(f"{output_path}/{TEXT_EXTENSION}")
 
-    text_plain = _extract_plain_text(response)
+    text_plain = extract_plain_text(response)
     text_file = open(f"{output_path}/{filename}", mode="w", encoding="utf-8")
     text_file.write(text_plain)
     print(f"Text extracted from document {filename} and saved correctly!")
@@ -42,7 +42,7 @@ def add_prefix(filename: str, extension: str) -> str:
     return extension + filename
 
 
-def _extract_plain_text(response):
+def extract_plain_text(response):
     text_plain = ""
     for slice_response in response:
         for block in slice_response["Blocks"]:
