@@ -51,9 +51,9 @@ class Dataset():
             "train": str(self.datasets_path)+"/train_dataset.csv", 
             "test": str(self.datasets_path)+"/test_dataset.csv"}
         )
-        dict_int2str, self.dict_str2int, num_classes = self._create_dict_labels()
+        dict_int2str, dict_str2int, num_classes = self._create_dict_labels()
         dataset = dataset.map(self._reconstract_objects)
-        return dataset.map(self._create_tag_int), dict_int2str, self.dict_str2int, num_classes
+        return dataset.map(self._create_tag_int), dict_int2str, dict_str2int, num_classes
         
     def _create_tag_int(self, batch):
         return {"ner_tags": [self.dict_str2int[n] for n in batch["ner_tags_str"]]}
