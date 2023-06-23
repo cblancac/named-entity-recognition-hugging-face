@@ -19,7 +19,7 @@ class CloudService(ABC):
     """Class representing a cloud service"""
 
     @abstractmethod
-    def call_textract_service_dataset(self, filename) -> None:
+    def call_textract_service(self, filename) -> None:
         """Extract information from files"""
 
     @abstractmethod
@@ -45,7 +45,7 @@ class AwsService(CloudService):
         self.output_path = output_path
         self.local_path_dataset = local_path_dataset
 
-    def call_textract_service_dataset(self, filename: str) -> List[Dict]:
+    def call_textract_service(self, filename: str) -> List[Dict]:
         response = get_textract_response(self.bucket_name.name, filename)
         save_response_json(response, self.output_path, filename)
         save_text_plain(response, self.output_path, filename)
