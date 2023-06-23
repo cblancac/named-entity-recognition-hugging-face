@@ -22,7 +22,7 @@ OUTPUT_PATH = Path("data")
 LOCAL_PATH_DATASET = Path("data/pdfs")
 OUTPUT_PATH_DATASET = Path("data/ner_labels")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     FILENAME = "6 big dividends_ Jackson Financial hikes, Saratoga keeps jumbo yield _ Pro Recap By Investing.com.pdf"
 
     # Upload pdf file to S3
