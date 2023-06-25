@@ -1,43 +1,67 @@
+from abc import ABC, abstractmethod
 from pathlib import Path
 import sys
-
-import boto3
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
-from cloud_service.cloud_service import AwsService
 from entidades.user_cases.entities_from_one_doc import entities_from_one_doc
 from entidades.engines.ner import (
     NerRegex,
     NerNeural,
 )
-from utils.save_response import extract_plain_text
+from entidades.input_output.file_manager import (
+    FileManager,
+    TxtFromPdfMiner,
+    TxtFromTextract,
+    TxtFromPytesseract,
+)
 
-s3 = boto3.resource("s3")
-BUCKET_NAME = s3.Bucket("process-textract-python")
-FOLDER_NAME = Path("upload-pdf")
 
-OUTPUT_PATH = Path("data")
-LOCAL_PATH_DATASET = Path("data/pdfs")
-OUTPUT_PATH_DATASET = Path("data/ner_labels")
+class TextFromDoc(ABC):
+    """Create the father class to choose the
+    reader of documents"""
 
-if __name__ == "__main__":
-    FILENAME = "6 big dividends_ Jackson Financial hikes, Saratoga keeps jumbo yield _ Pro Recap By Investing.com.pdf"
+    @abstractmethod
+    def get_reader(self, type: str):
+        """Return the FileManager choosen"""
+        raise NotImplementedError
 
-    # Upload pdf file to S3
-    aws_service = AwsService(
-        BUCKET_NAME,
-        FOLDER_NAME,
-        output_path=OUTPUT_PATH,
-        local_path_dataset=LOCAL_PATH_DATASET,
+class TextFromDocImpl(TextFromDoc):
+    """Implementation of TextFromDoc, choose one
+    option to read document"""
+
+    def get_reader(self, type: str) -> FileManager:
+        dict = {
+                    "pdf": TxtFromPdfMiner(),
+                    "aws": TxtFromTextract(),
+                    "img": TxtFromPytesseract(),
+                }
+        return dict[type]
+
+
+def main(filename: str) -> None:
+    """Given a document, choose the reader to use
+    and extract the entities from it"""
+    type_reader = str(
+        input(
+            """
+    [pdf]Para utilizar PDF Miner
+    [aws]Para utilizar Textract
+    [img]Para utilizar Pytesseract
+    >>>: """
+        )
     )
 
-    aws_service.upload_s3_file(FILENAME)
-    response = aws_service.call_textract_service(str(FOLDER_NAME / FILENAME))
-    text = extract_plain_text(response)
+    reader_doc = TextFromDocImpl().get_reader(type=type_reader)
+    text = reader_doc.load_info_from_doc(filename)
     ner_regex = NerRegex()
     ner_neural = NerNeural()
 
     entities = entities_from_one_doc(text, ner_regex, ner_neural)
     print(entities)
+
+
+if __name__ == "__main__":
+    FILENAME = "6 big dividends_ Jackson Financial hikes, Saratoga keeps jumbo yield _ Pro Recap By Investing.com.pdf"
+    main(FILENAME)
