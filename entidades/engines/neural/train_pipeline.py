@@ -7,8 +7,8 @@ sys.path.append(str(project_root))
 from dataset.dataset          import Dataset
 from train_model.ner_trainer import NerTrainer
 
-NUM_EPOCHS = 1 #3
-BATCH_SIZE = 1 #24
+NUM_EPOCHS = 3
+BATCH_SIZE = 24
 
 datasets_path = Path("data/ner_labels/")
 dataset_filename = Path("dataset.csv")
