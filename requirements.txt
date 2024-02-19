@@ -3,6 +3,7 @@ colorama
 nltk
 numpy
 pandas
-pdfminer
+pdfminer.six
+regex
 seqeval
 tqdm

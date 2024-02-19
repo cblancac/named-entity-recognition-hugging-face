@@ -15,6 +15,9 @@ class Dataset():
         self.export_path      = datasets_path / dataset_filename
         self.complete_dataset = pd.DataFrame()
         self.raw_dataset      = pd.DataFrame()
+        self.dict_int2str     = {}
+        self.dict_str2int     = {}
+        self.num_classes      = 0
 
     def create_dataset_csv(self):
         self._delete_old_files_in_folder()
@@ -51,9 +54,9 @@ class Dataset():
             "train": str(self.datasets_path)+"/train_dataset.csv", 
             "test": str(self.datasets_path)+"/test_dataset.csv"}
         )
-        dict_int2str, dict_str2int, num_classes = self._create_dict_labels()
+        self.dict_int2str, self.dict_str2int, self.num_classes = self._create_dict_labels()
         dataset = dataset.map(self._reconstract_objects)
-        return dataset.map(self._create_tag_int), dict_int2str, dict_str2int, num_classes
+        return dataset.map(self._create_tag_int)
         
     def _create_tag_int(self, batch):
         return {"ner_tags": [self.dict_str2int[n] for n in batch["ner_tags_str"]]}

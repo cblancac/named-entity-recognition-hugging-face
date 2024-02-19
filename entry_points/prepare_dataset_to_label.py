@@ -14,8 +14,8 @@ from utils.process_images import (
 )
 
 s3 = boto3.resource("s3")
-BUCKET_NAME = s3.Bucket("process-textract-python")
-FOLDER_NAME = Path("upload-pdf")
+BUCKET_NAME = s3.Bucket("req-judiciales-dev")
+FOLDER_NAME = Path("docs_originales/docs_processed/")
 
 OUTPUT_PATH = Path("data")
 LOCAL_PATH_DATASET = Path("data/pdfs")
