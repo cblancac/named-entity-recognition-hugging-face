@@ -38,6 +38,7 @@ class NerTrainer:
             num_train_epochs=self.n_epochs,
             per_device_train_batch_size=self.batch_size,
             per_device_eval_batch_size=self.batch_size,
+            evaluation_strategy='epoch',
             save_steps=1e6,
             weight_decay=0.01,
             disable_tqdm=False,
@@ -97,11 +98,11 @@ class NerTrainer:
             examples_labels, examples_preds = [], []
             for seq_idx in range(seq_len):
                 # Ignore label IDs = -100
-                if label_ids[batch_idx, seq_idx] != 100:
+                if label_ids[batch_idx, seq_idx] != -100:
                     examples_labels.append(self.int2str[label_ids[batch_idx][seq_idx]])
                     examples_preds.append(self.int2str[preds[batch_idx][seq_idx]])
 
             labels_list.append(examples_labels)
             preds_list.append(examples_preds)
 
-            return preds_list, labels_list
+        return preds_list, labels_list

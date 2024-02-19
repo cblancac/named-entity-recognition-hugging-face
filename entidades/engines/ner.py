@@ -5,11 +5,14 @@ from typing import List, Dict
 
 import torch
 from transformers import AutoTokenizer
-from transformers import pipeline
+#from transformers import pipeline
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
+from entidades.engines.neural.entities_from_neural import entities_from_neural
+from entidades.engines.regex.regex_pattern import apply_all
+from inference_model.ner_inferencer import NerInferencer
 from model import XLMRobertaForTokenClassification
 
 # Specify the path of the model
@@ -33,12 +36,18 @@ class NerNeural(Ner):
     """Child from Ner class: extract entities using neural network"""
 
     def extract_entities_from_text(self, text: str) -> List[Dict]:
-        nlp = pipeline("ner", model=model, tokenizer=tokenizer)
-        return nlp(text)
+        # method 1:
+        #nlp = pipeline("ner", model=model, tokenizer=tokenizer, aggregation_strategy="simple")
+        #entities = nlp(text)
+        # method 2:
+        pipeline = NerInferencer(text, model_ckpt)
+        entities = pipeline.inference()
+        return entities_from_neural(entities)
 
 
 class NerRegex(Ner):
     """Child from Ner class: extract entities using regular expression"""
 
     def extract_entities_from_text(self, text: str) -> List[Dict]:
-        pass
+        return apply_all(text)
+        

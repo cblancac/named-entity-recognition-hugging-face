@@ -4,5 +4,6 @@ nltk
 numpy
 pandas
 pdfminer.six
+regex
 seqeval
 tqdm

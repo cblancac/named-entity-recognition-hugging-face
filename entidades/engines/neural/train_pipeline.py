@@ -27,13 +27,13 @@ def train_pipeline():
     _train(model_ckpt, data)
 
 def _train(model_ckpt, data):
-    dataset, dict_int2str, dict_str2int, num_classes = data.load_hf_dataset()
+    dataset = data.load_hf_dataset()
     ner = NerTrainer(
         model_ckpt=model_ckpt,
         data=dataset,
-        int2str=dict_int2str,
-        str2int=dict_str2int,
-        num_classes=num_classes,
+        int2str=data.dict_int2str,
+        str2int=data.dict_str2int,
+        num_classes=data.num_classes,
         n_epochs=NUM_EPOCHS,
         batch_size=BATCH_SIZE,
     )
