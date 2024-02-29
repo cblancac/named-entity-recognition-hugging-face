@@ -14,8 +14,8 @@ from utils.process_images import (
 )
 
 s3 = boto3.resource("s3")
-BUCKET_NAME = s3.Bucket("req-judiciales-dev")
-FOLDER_NAME = Path("docs_originales/docs_processed/")
+BUCKET_NAME = s3.Bucket("process-textract-python")
+FOLDER_NAME = Path("upload-pdf")
 
 OUTPUT_PATH = Path("data")
 LOCAL_PATH_DATASET = Path("data/pdfs")
@@ -29,7 +29,7 @@ if __name__ == "__main__":
         output_path=OUTPUT_PATH,
         local_path_dataset=LOCAL_PATH_DATASET,
     )
-    #aws_service.upload_s3_dataset()
+    aws_service.upload_s3_dataset()
 
     # Call Textract service to get the response per pdf
     for object_summary in BUCKET_NAME.objects.filter(Prefix=f"{FOLDER_NAME}"):
