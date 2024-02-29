@@ -125,7 +125,7 @@ class NerInferencer:
         return preds, out_label_ids
     
     def _get_bio_predictions(self, to_predict, preds, out_label_ids, model):
-        preds = preds.cpu().detach().numpy()
+        #preds = preds.cpu().detach().numpy()
         preds = np.argmax(preds, axis=2)
 
         out_label_list = [[] for _ in range(out_label_ids.shape[0])]
