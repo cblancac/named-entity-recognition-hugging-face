@@ -15,7 +15,10 @@ In this project a named entity recognition (NER) model has been trained to detec
 
 
 ## 	:construction: Data Preparation
-The first thing to do in this project is to get a proper dataset. This is a very tedious task, so only 44 document has been labelled in this first version. To do this, you should create a folder called `data`, and inside of it, another folder called `pdfs`, containing all the files to label. Once it is done, run the command `python entry_points/prepare_dataset_to_label.py`. When the process is finished, a new folder `ner_labels` will be created inside of `data`. A csv file will be created per each document, with 2 columns `sentence_id` and `words`. A third column `labels` is needed to be created, which will be used to label manually each word of the document, following the BIO format.
+The first thing to do in this project is to get a proper dataset. This is a very tedious task, so only 44 document has been labelled in this first version. To do this, you should create a folder called `data`, and inside of it, another folder called `pdfs`, containing all the files to label. Once it is done, you are ready to run the command `python entry_points/prepare_dataset_to_label.py`. This script will upload all the documents inside of 'pdfs' folder to S3 (in the bucket and folder that you select). Then Textract will be called, once per document, extracting the information of their content and coordinates, saving them in you machine:
+- txts: content of the document.
+- jsons: information of coordinates.
+- ner_labels: with the csv of the document with 3 columns, sentence_id (phrase to which each word belongs), words (for each word in the document) and labels (initially empty, and need to be labelled manually, following the following the BIO format).
 
 
 ## 	:weight_lifting_man: Training models
