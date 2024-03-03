@@ -5,7 +5,8 @@ In this project a named entity recognition (NER) model has been trained to detec
 ## :gear: Setup
 - Clone this repository: `git clone https://github.com/cblancac/named-entity-recognition-hugging-face.git`.
 - `pip install requirements.txt`
-- This is enough to extract the information from the document (pdfs, images, etc) using Textract or PDFMiner. Textract a OCR tool to extract the information from the document, but PDFMiner is free (although it only works with pdf format). In order to work with a free OCR and images, it would be neccesary to install Pytesseract:
+- `sudo yum install poppler-utils`
+- This is enough to extract the information from the document (pdfs, images, etc) using Textract or PDFMiner. Textract is a OCR tool to extract the information from the document (having access also to their coordinates), but PDFMiner is free (although it only works with pdf format). In order to work with a free OCR and images, it would be neccesary to install Pytesseract:
     - `pip install pillow`
     - `sudo apt-get update`
     - `sudo apt install tesseract-ocr`
