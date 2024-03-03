@@ -2,7 +2,7 @@ import time
 
 import boto3
 
-textract = boto3.client('textract', region_name='eu-central-1')
+textract = boto3.client('textract', region_name='eu-west-1')
 
 
 def _start_job(bucket_name, document_name):
