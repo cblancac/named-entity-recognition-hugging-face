@@ -2,10 +2,15 @@ import os
 from pathlib import Path
 from os import listdir
 from os.path import isfile, join
+import random
 
 import ast
 from datasets import load_dataset
 import pandas as pd
+
+# Set the seed value
+seed_value = 1234
+random.seed(seed_value)
 
 
 class Dataset():
@@ -39,6 +44,7 @@ class Dataset():
 
     def split_train_test(self, train_size: float = 0.8):
         filenames = self.complete_dataset["filename"].unique()
+        random.shuffle(filenames)
         n_files = len(filenames)
         filenames_train = filenames[:int(n_files*train_size)]
         filenames_test  = filenames[int(n_files*train_size):]
