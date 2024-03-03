@@ -25,4 +25,8 @@ The first thing to do in this project is to get a proper dataset. This is a very
 
 
 ## 	:weight_lifting_man: Training models
-Once the dataset is ready, it is time to train the model The model has not been trained from scrach, but a very large pretrained model `xlm-roberta-base` has been taken from `Hugging Face`, and later on it has been fine-tuned by using the dataset that was just created. At this way, a lot of time and money has been saved, taking the expert knowledge of the pretrained model over of the English language. To train the model, just execute the command `python entry_points/train.py'. After a few minutes, the model will be fine-tuned and storage in your machine, showing in your terminal the metrics achieved by epoch. Only with these 44 documents, an 80% f1 score has been achieved, which is actually a very good result to have been fine-tuned with such a small dataset.
+Once the dataset is ready, it is time to train the model The model has not been trained from scrach, but a very large pretrained model `xlm-roberta-base` has been taken from `Hugging Face`, and later on it has been fine-tuned by using the dataset that was just created. At this way, a lot of time and money has been saved, taking the expert knowledge of the pretrained model over of the English language. To train the model, just execute the command `python entry_points/train.py'.
+
+![image](https://github.com/cblancac/named-entity-recognition-hugging-face/assets/105242658/f686ebfa-42ef-42b8-912f-d927b882fbfa)
+
+After a few minutes, the model will be fine-tuned and storage in your machine, showing in your terminal the metrics achieved by epoch. Only with these 44 documents, an 80% f1 score has been achieved, which is actually a very good result to have been fine-tuned with such a small dataset.
