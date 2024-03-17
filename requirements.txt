@@ -1,7 +1,7 @@
 boto3==1.26.88
 colorama
 nltk==3.8.1
-langchain-text-splitters=0.0.1
+langchain-text-splitters==0.0.1
 numpy==1.24.2
 pandas==1.5.3
 pdfminer.six==20221105
