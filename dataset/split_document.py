@@ -1,18 +1,13 @@
+import os
 from typing import List, Dict
 from PIL.PngImagePlugin import PngImageFile
+from langchain_text_splitters import TokenTextSplitter
 
 import pandas as pd
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
 
-from utils.utils import (
-    makedirs,
-)
-from utils.save_response import (
-    add_prefix,
-)
-
-NER_EXTENSION = "ner_labels/"
+TEMP_FOLDER = "temp"
 
 
 class SplitDocument:
@@ -27,11 +22,15 @@ class SplitDocument:
         self.grouped_words = grouped_words
         self.grouped_coordinates = grouped_coordinates
         self.size_images = size_images
+        self.text_splitter = TokenTextSplitter(chunk_size=500, chunk_overlap=0)
+
 
     def split_doc_by_sentences(self) -> List[Dict]:
         """Get paragraphs per documument and convert them into lists of sentences."""
         paragraphs = self._split_doc_by_paragraphs()
-        sentences = [sent_tokenize(text) for text in paragraphs]
+        sentences = [sent_tokenize(text) if len(text)>800 else [text] for text in paragraphs]
+        sentences = _flatten(sentences)
+        sentences = [self.text_splitter.split_text(sentence) for sentence in sentences]
         sentences = _flatten(sentences)
         sentences = [
             {"sentence_id": idx, "text": sentence}
@@ -51,7 +50,7 @@ class SplitDocument:
         return words
 
     def export_datasets_splited(
-        self, words: List[Dict], output_path: str, filename: str
+        self, words: List[Dict], output_path: str,
     ) -> None:
         """Export to csv the information related to sentence and their words."""
         data_to_label = pd.DataFrame(columns=["sentence_id", "words"])
@@ -68,10 +67,11 @@ class SplitDocument:
                 ignore_index=True,
             )
 
-        filename = add_prefix(filename, NER_EXTENSION)
-        makedirs(f"{output_path}/{filename}")
+        data_to_label.to_csv(f"{TEMP_FOLDER}/{output_path}", index=False)
 
-        data_to_label.to_csv(f"{output_path}/{filename}/labels.csv", index=False)
+    def clean_temporary_files(self, path: str) -> None:
+        """Delete csv file when it is uploaded to s3"""
+        os.remove(f"{TEMP_FOLDER}/{path}")
 
     def _split_doc_by_paragraphs(self):
         words_grouped_by_position = []
@@ -87,11 +87,7 @@ class SplitDocument:
                         words_per_pages[idx_splits[-2] : idx_splits[-1]]
                     )
 
-                elif (
-                    coord_per_pages[idx_token + 1]["Height"] < 0.018
-                    and height * coordinate["Top"] + 0.02 * height
-                    < height * coord_per_pages[idx_token + 1]["Top"]
-                ):
+                elif height * coordinate["Top"] + 0.03 * height < height * coord_per_pages[idx_token + 1]["Top"]:
                     idx_splits.append(idx_token + 1)
                     words_grouped_by_position.append(
                         words_per_pages[idx_splits[-2] : idx_splits[-1]]

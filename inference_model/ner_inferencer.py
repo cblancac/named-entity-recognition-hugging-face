@@ -21,21 +21,21 @@ MODEL_TYPE = "roberta"
 
 class NerInferencer:
     def __init__(
-            self, text, model_ckpt,
+            self, sentences, model_ckpt,
         ):
-        self.text = text
+        self.sentences = sentences
         self.model_ckpt = model_ckpt
         self.pad_token_label_id = -100
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.config_class, _, self.tokenizer_class = self._get_config_and_tokenizer_classes(MODEL_TYPE)
 
     def inference(self):
-        to_predict = sent_tokenize(self.text)
         tokenizer = self._get_tokenizer()
         model = self._get_model()
-        model_inputs = self._encode(tokenizer, to_predict)
+        model_inputs = self._encode(tokenizer, self.sentences)
         encoded_model_inputs = self._change_shape_for_batching(model_inputs)
-        preds, out_label_ids = self._get_preds_and_label_ids(to_predict, encoded_model_inputs, tokenizer, model)
-        bio_entities_predicted = self._get_bio_predictions(to_predict, preds, out_label_ids, model)
+        preds, out_label_ids = self._get_preds_and_label_ids(self.sentences, encoded_model_inputs, tokenizer, model)
+        bio_entities_predicted = self._get_bio_predictions(self.sentences, preds, out_label_ids, model)
         entities = self._process_ner_predictions(bio_entities_predicted)
         return entities
 
@@ -49,8 +49,7 @@ class NerInferencer:
             Path(self.model_ckpt), do_lower_case=True)
         
     def _get_model(self):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        return XLMRobertaForTokenClassification.from_pretrained(self.model_ckpt).to(device)
+        return XLMRobertaForTokenClassification.from_pretrained(self.model_ckpt).to(self.device)
 
     def _encode(self, tokenizer, to_predict: List[str]):
         return tokenizer.batch_encode_plus(
@@ -81,7 +80,7 @@ class NerInferencer:
             eval_dataloader, disable=True, desc="Running Prediction"
         ):
         
-            batch = tuple(t.to("cpu") for t in batch)
+            batch = tuple(t.to(self.device) for t in batch)
             inputs = {
                 "input_ids": batch[0],
                 "attention_mask": batch[1],
@@ -120,6 +119,12 @@ class NerInferencer:
                 out_label_ids[index].extend(
                     [-100] * (max_len - len(out_label_ids[index]))
                 )
+            
+            # When the tokenization of the sentence is too long, truncate it
+            # TODO: Split the sentence previously if it is longer than 1_000
+            # characters, saving the information before calling thus method
+            if len(out_label_ids[index]) > max_len:
+                out_label_ids[index] = out_label_ids[index][:max_len]
 
         out_label_ids = np.array(out_label_ids).reshape(len(out_label_ids), max_len)
         return preds, out_label_ids
