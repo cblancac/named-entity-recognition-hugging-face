@@ -30,3 +30,8 @@ Once the dataset is ready, it is time to train the model The model has not been 
 ![image](https://github.com/cblancac/named-entity-recognition-hugging-face/assets/105242658/f686ebfa-42ef-42b8-912f-d927b882fbfa)
 
 After a few minutes, the model will be fine-tuned and storage in your machine (in the `models` folder), showing in your terminal the metrics achieved by epoch. Only with these 44 documents, an 80% f1 score has been achieved, which is actually a very good result to have been fine-tuned with such a small dataset.
+
+
+## :tada: Make predictions
+
+
