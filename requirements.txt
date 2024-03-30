@@ -2,13 +2,16 @@ boto3==1.26.88
 colorama
 datasets==2.18.0
 nltk==3.8.1
+langchain-text-splitters==0.0.1
 numpy==1.24.2
 pandas==1.5.3
 pdfminer.six==20221105
 pdf2image==1.16.0
+pydantic==2.6.0
 pytesseract==0.3.10
 regex==2022.10.31
 seqeval==1.2.2
+tiktoken==0.6.0
 torch==2.0.0
 transformers==4.27.4
 tqdm==4.65.0
