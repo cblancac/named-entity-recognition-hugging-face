@@ -12,9 +12,9 @@ from entidades.engines.ner import (
 )
 from entidades.input_output.file_manager import (
     FileManager,
-    TxtFromPdfMiner,
-    TxtFromTextract,
-    TxtFromPytesseract,
+    SentencesFromPdfMiner,
+    SentencesFromTextract,
+    SentencesFromPytesseract,
 )
 
 
@@ -33,9 +33,9 @@ class TextFromDocImpl(TextFromDoc):
 
     def get_reader(self, type: str) -> FileManager:
         dict = {
-                    "pdf": TxtFromPdfMiner(),
-                    "aws": TxtFromTextract(),
-                    "img": TxtFromPytesseract(),
+                    "pdf": SentencesFromPdfMiner(),
+                    "aws": SentencesFromTextract(),
+                    "img": SentencesFromPytesseract(),
                 }
         return dict[type]
 
@@ -54,11 +54,11 @@ def main(filename: str) -> None:
     )
 
     reader_doc = TextFromDocImpl().get_reader(type=type_reader)
-    text = reader_doc.load_info_from_doc(filename)
+    sentences = reader_doc.load_sentences_from_doc(filename)
     ner_regex = NerRegex()
     ner_neural = NerNeural()
 
-    entities = entities_from_one_doc(text, ner_regex, ner_neural)
+    entities = entities_from_one_doc(sentences, ner_regex, ner_neural)
     print(entities)
 
 

@@ -37,6 +37,8 @@ class NerNeural(Ner):
 
     def extract_entities_from_text(self, text: str) -> List[Dict]:
         # method 1:
+        #TODO: In case we need to work with positions. 
+        #model = XLMRobertaForTokenClassification.from_pretrained(model_ckpt)
         #nlp = pipeline("ner", model=model, tokenizer=tokenizer, aggregation_strategy="simple")
         #entities = nlp(text)
         # method 2:
