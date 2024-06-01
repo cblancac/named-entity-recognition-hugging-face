@@ -33,5 +33,10 @@ After a few minutes, the model will be fine-tuned and storage in your machine (i
 
 
 ## :tada: Make predictions
+Finally the prediction of the entities present in the document can be extracted running the script python entry_points/train.py. Executing this script, we will have to introduce the filename of one of our filenames (in the folder data/pdfs) as input and it will give us back a dictionary with the entities detected in the document by the model. Before we get the output, we will be asked to choose our favourite OCR to read the content from the document:
+
+* "pdf": to use PDF Miner
+* "aws": to use Textract
+* "img": to use Pytesseract
 
 
