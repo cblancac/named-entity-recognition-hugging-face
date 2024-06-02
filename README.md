@@ -43,6 +43,8 @@ All the files generated for the Named Entity Recognition model has been uploaded
 
 You only need to choose a file to be processed or choose the one I uploaded as an example: 
 ![image](https://github.com/cblancac/named-entity-recognition-hugging-face/assets/105242658/b370f999-437e-4dfe-a957-2a6677a7674f)
+
+
 The result will be something similar to this:
 
 ![image](https://github.com/cblancac/named-entity-recognition-hugging-face/assets/105242658/9a2c0df0-fcbd-444b-a140-43d4cf4d4fac)
