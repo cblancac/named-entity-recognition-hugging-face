@@ -40,3 +40,9 @@ Finally the prediction of the entities present in the document can be extracted 
 * **img**: to use Pytesseract
 
 All the files generated for the Named Entity Recognition model has been uploaded to my Hugging Face account, with the requirements.txt and the script necessary to run inference using Gradio. You could tested directly from my [Hugging Face Spaces]([https://huggingface.co/spaces/carblacac/emotion-detection](https://huggingface.co/spaces/carblacac/ner-investing))
+
+You only need to choose a file to be processed or choose the one I uploaded as an example: 
+![image](https://github.com/cblancac/named-entity-recognition-hugging-face/assets/105242658/b370f999-437e-4dfe-a957-2a6677a7674f)
+The result will be something similar to this:
+
+![image](https://github.com/cblancac/named-entity-recognition-hugging-face/assets/105242658/9a2c0df0-fcbd-444b-a140-43d4cf4d4fac)
