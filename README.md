@@ -61,6 +61,7 @@ The first step to deploy the model is to attach a new policy to your IAM role: `
 
 
 1. **EC2**:
+
 In the root folder folder it is needed to add the next files:
   * `Dockerfile`: configuration file used to build a Docker image.
   * `app.py`: Python file containing the code for the application.
@@ -68,17 +69,25 @@ In the root folder folder it is needed to add the next files:
   * `exceptions.py`: Python file that contain definitions of custom exceptions used in the application.
   * `requirements.txt`: file containing a list of Python dependencies required for the application.
 
+
 2. **ECR**:
+
 Once all the necessary files and folders have been created in EC2, it is time to create a repository.
 
 ![image](https://github.com/user-attachments/assets/7571a9cb-69c9-4b67-b478-506b077300b1)
 
 When it is created, click on it and click on the box to "View push commands". This will show all the commands that need to be executed from the terminal in EC2.
 
+
 3. **Lambda Function**:
+
 The next step is to create a Lambda function. Go to the Lambda service and click on "Create a function". 
 ![image](https://github.com/user-attachments/assets/539bad35-4ab1-4468-863c-98bf1efaffaf)
 
 Select the container image box, give a name to the lambda function and click on "Browse images":
 ![image](https://github.com/user-attachments/assets/9beb4d53-99b0-482a-9d7b-726c6325b962)
+
+Select the repository containing the image to use and select the image that was just created.
+![image](https://github.com/user-attachments/assets/290a9f1d-4b94-4eb4-a318-2cb19778d263)
+
 
