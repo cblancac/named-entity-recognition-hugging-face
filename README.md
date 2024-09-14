@@ -74,3 +74,11 @@ Once all the necessary files and folders have been created in EC2, it is time to
 ![image](https://github.com/user-attachments/assets/7571a9cb-69c9-4b67-b478-506b077300b1)
 
 When it is created, click on it and click on the box to "View push commands". This will show all the commands that need to be executed from the terminal in EC2.
+
+3. **Lambda Function**:
+The next step is to create a Lambda function. Go to the Lambda service and click on "Create a function". 
+![image](https://github.com/user-attachments/assets/539bad35-4ab1-4468-863c-98bf1efaffaf)
+
+Select the container image box, give a name to the lambda function and click on "Browse images":
+![image](https://github.com/user-attachments/assets/9beb4d53-99b0-482a-9d7b-726c6325b962)
+
