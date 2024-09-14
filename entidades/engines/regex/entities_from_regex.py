@@ -11,15 +11,18 @@ def entities_from_regex(
     category: str,
 ) -> List[Entity]:
     matches = pattern.finditer(text)
-    entities = [
-        Entity(
-            start=match.start(),
-            end=match.end(),
-            word=match.group(0),
-            entity=category,
-            score=1,
-            index=-1
-        )
-        for match in matches
-    ]
+#    entities = [
+#        Entity(
+#            start=match.start(),
+#            end=match.end(),
+#            word=match.group(0),
+#            entity=category,
+#            score=1,
+#            index=-1
+#        )
+#        for match in matches
+#    ]    
+    entities = {
+        category: [match.group(1).strip() for match in matches]
+    }
     return entities

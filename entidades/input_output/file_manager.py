@@ -13,9 +13,16 @@ from utils.process_images import (
 )
 from cloud_service.cloud_service import AwsService
 from utils.prepare_aws_response import get_textract_response
-from utils.process_images import convert_from_bytes
+from utils.process_images import convert_from_path
 from utils.save_response import extract_plain_text
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=800,
+    chunk_overlap=0,
+    length_function=len,
+    is_separator_regex=False,
+)
 
 s3 = boto3.resource("s3")
 BUCKET_NAME = s3.Bucket("process-textract-python")
@@ -40,7 +47,8 @@ class FileManager(ABC):
     
 class SentencesFromPdfMiner(FileManager):
     def load_sentences_from_doc(self, path: str) -> str:
-        return extract_text(str(LOCAL_PATH_DATASET / path))
+        plain_text = extract_text(str(LOCAL_PATH_DATASET / path))
+        return text_splitter.split_text(plain_text)        
     
 class SentencesFromTextract(FileManager):
     def load_sentences_from_doc(self, path: str) -> str:
@@ -78,13 +86,11 @@ class SentencesFromTextract(FileManager):
 
 class SentencesFromPytesseract(FileManager):
     def load_sentences_from_doc(self, path: str) -> str:
-        images = convert_from_bytes(str(LOCAL_PATH_DATASET / path))
+        images = convert_from_path(str(LOCAL_PATH_DATASET / path))
         return self._concat_text_from_images(images)
 
     def _concat_text_from_images(self, images):
-        text = ""
+        plain_text = ""
         for image in images:
-            text = text + " " + pytesseract.image_to_string(image)
-        return text
-
-
+            plain_text = plain_text + " " + pytesseract.image_to_string(image)
+        return text_splitter.split_text(plain_text)

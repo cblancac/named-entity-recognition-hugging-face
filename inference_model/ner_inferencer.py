@@ -153,45 +153,63 @@ class NerInferencer:
         ]
         return preds
     
-from typing import Dict, List
+    def _process_ner_predictions(
+        self, predictions: List[List[Dict[str, str]]], margin: int = 4
+    ) -> Dict[str, List[str]]:
 
-def _process_ner_predictions(
-    self, predictions: List[List[Dict[str, str]]], margin: int = 4
-) -> List[Dict[str, any]]:
+        predictions = _flatten_list(predictions)
+        preds = [TokenPrediction(x) for x in predictions]
+        entities = PredictedEntities(max_interval=margin)
 
-    predictions = _flatten_list(predictions)
-    preds = [TokenPrediction(x) for x in predictions]
-    entities = PredictedEntities(max_interval=margin)
+        for token_idx, token_pred in enumerate(preds):
+            if token_pred.is_empty():
+                continue
 
-    processed_entities = []
-
-    for token_idx, token_pred in enumerate(preds):
-        if token_pred.is_empty():
-            continue
-
-        label = token_pred.get_label()
-        word = token_pred.get_word()
-
-        if token_pred.is_start():
-            start_idx = token_idx
-            end_idx = token_idx
-            while end_idx + 1 < len(preds) and preds[end_idx + 1].get_label().startswith("I-"):
-                end_idx += 1
-            entities.add_new(label=label, word=word, start=start_idx, end=end_idx)
-        else:
-            entities.extend_last(label=label, word=word, idx=token_idx)
-
-    entities_dict = entities.export_as_dict()
-    for label, words in entities_dict.items():
-        for word in words:
-            processed_entities.append({
-                'word': word,
-                'label': label[2:],  # Removing the prefix "B-" or "I-"
-                'start': entities_dict[label][word]['start'],
-                'end': entities_dict[label][word]['end']
-            })
-
-    return processed_entities
+            label = token_pred.get_label()
+            word = token_pred.get_word()
+            if token_pred.is_start():
+                entities.add_new(label=label, word=word, idx=token_idx)
+            else:
+                entities.extend_last(label=label, word=word, idx=token_idx)
+        return entities.export_as_dict()
+    
+#    def _process_ner_predictions(
+#        self, predictions: List[List[Dict[str, str]]], margin: int = 4
+#    ) -> List[Dict[str, any]]:
+#
+#        predictions = _flatten_list(predictions)
+#        preds = [TokenPrediction(x) for x in predictions]
+#        entities = PredictedEntities(max_interval=margin)
+#
+#        processed_entities = []
+#
+#        for token_idx, token_pred in enumerate(preds):
+#            if token_pred.is_empty():
+#                continue
+#
+#            label = token_pred.get_label()
+#            word = token_pred.get_word()
+#
+#            if token_pred.is_start():
+#                start_idx = token_idx
+#                end_idx = token_idx
+#                while end_idx + 1 < len(preds) and preds[end_idx + 1].get_label().startswith("I-"):
+#                    end_idx += 1
+#                entities.add_new(label=label, word=word, start=start_idx, end=end_idx)
+#            else:
+#                entities.extend_last(label=label, word=word, idx=token_idx)
+#
+#        entities_dict = entities.export_as_dict()
+#        for label, words in entities_dict.items():
+#            for word in words:
+#                processed_entities.append({
+#                    'word': word,
+#                    'label': label[2:],  # Removing the prefix "B-" or "I-"
+#                    'start': entities_dict[label][word]['start'],
+#                    'end': entities_dict[label][word]['end']
+#                })
+#
+#        return processed_entities
 
 
 

@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import numpy as np
 from PIL.PngImagePlugin import PngImageFile
-from pdf2image import convert_from_bytes
+from pdf2image import convert_from_bytes, convert_from_path
 
 class ProcessImage:
     """Class to process image files"""
@@ -12,7 +12,7 @@ class ProcessImage:
 
     def convert_pdf_to_images(self, file_path: str) -> List[PngImageFile]:
         """Take one pdf file and convert it to one image per page"""
-        return convert_from_bytes(file_path, dpi=150, fmt="png")
+        return convert_from_path(file_path, dpi=150, fmt="png")
 
     def get_size_per_image(self, images: List[PngImageFile]) -> List[Tuple[int]]:
         """Get the size of all the images in a document"""

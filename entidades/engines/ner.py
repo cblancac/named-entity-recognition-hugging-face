@@ -35,21 +35,24 @@ class Ner(ABC):
 class NerNeural(Ner):
     """Child from Ner class: extract entities using neural network"""
 
-    def extract_entities_from_text(self, text: str) -> List[Dict]:
+    def extract_entities_from_text(self, sentences: List[str]) -> List[Dict]:
         # method 1:
         #TODO: In case we need to work with positions. 
         #model = XLMRobertaForTokenClassification.from_pretrained(model_ckpt)
         #nlp = pipeline("ner", model=model, tokenizer=tokenizer, aggregation_strategy="simple")
         #entities = nlp(text)
         # method 2:
-        pipeline = NerInferencer(text, model_ckpt)
+        pipeline = NerInferencer(sentences, model_ckpt)
         entities = pipeline.inference()
-        return entities_from_neural(entities)
+        #return entities_from_neural(entities)
+        return dict(entities)
 
 
 class NerRegex(Ner):
     """Child from Ner class: extract entities using regular expression"""
 
-    def extract_entities_from_text(self, text: str) -> List[Dict]:
-        return apply_all(text)
+    def extract_entities_from_text(self, sentences: List[str]) -> List[Dict]:
+        text = ' '.join(sentences)
+        regex_entities = apply_all(text)
+        return regex_entities
         

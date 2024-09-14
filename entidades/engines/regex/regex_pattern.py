@@ -75,7 +75,12 @@ _ALL_METHODS: List[Callable] = [
 
 
 def apply_all(text: str) -> List[Dict]:
-    matches = list()
+#    matches = list()
+#    for method in _ALL_METHODS:
+#        matches += method(text)
+#    return matches
+    matches = dict()
     for method in _ALL_METHODS:
-        matches += method(text)
-    return matches
+        matches.update(method(text))
+    matches = {k: v for k, v in matches.items() if v}
+    return matches 
