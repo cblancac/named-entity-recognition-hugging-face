@@ -67,3 +67,10 @@ In the root folder folder it is needed to add the next files:
   * `models/xlm-roberta-base-investing-ner`: directory containing data for the fine-tuned model.
   * `exceptions.py`: Python file that contain definitions of custom exceptions used in the application.
   * `requirements.txt`: file containing a list of Python dependencies required for the application.
+
+1. **ECR**:
+Once all the necessary files and folders have been created in EC2, it is time to create a repository.
+
+![image](https://github.com/user-attachments/assets/7571a9cb-69c9-4b67-b478-506b077300b1)
+
+When it is created, click on it and click on the box to "View push commands".
